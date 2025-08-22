@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TopGames 2025 - Roblox Updater</title>
+    <style>
+      body {
+        margin: 0;
+        background-color: rgb(25, 25, 25);
+        font-family: sans-serif;
+        color: white;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        position: relative;
+      }
+
+      #info {
+        display: flex;
+        gap: 20px;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: all 0.5s ease-in-out;
+      }
+
+      #info > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        border-radius: 10px;
+        padding: 10px;
+        background-color: rgb(15, 15, 15);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+        width: 200px;
+        max-width: 220px;
+        text-align: center;
+        transition: transform 0.5s ease, box-shadow 0.5s ease;
+        cursor: pointer;
+      }
+
+      #info > div:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+      }
+
+      #info h1,
+      #info h2 {
+        margin: 0;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        word-wrap: break-word;
+        transition: color 0.3s ease;
+      }
+
+      #info img {
+        border-radius: 5px;
+        transition: transform 0.5s ease, filter 0.5s ease;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+
+      .floating {
+        animation: float 3s ease-in-out infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="info"></div>
+
+    <script>
+      function shortenNumber(num) {
+        if (num >= 1_000_000_000) {
+          return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, "") + "B";
+        } else if (num >= 1_000_000) {
+          return (num / 1_000_000).toFixed(1).replace(/\.0$/, "") + "M";
+        } else if (num >= 1_000) {
+          return (num / 1_000).toFixed(1).replace(/\.0$/, "") + "K";
+        } else {
+          return num.toString();
+        }
+      }
+      const listgameunid = [
+        7326934954, 7709344486, 7436755782, 7008097940, 994732206, 6035872082,
+      ];
+      const infoDiv = document.getElementById("info");
+
+      listgameunid.forEach((unid, i) => {
+        const div = document.createElement("div");
+        const img = document.createElement("img");
+        const h1 = document.createElement("h1");
+        h1.textContent = "Loading...";
+        const h2 = document.createElement("h2");
+        h2.textContent = "Loading...";
+        img.width = 200;
+
+        const fetchImage = () => {
+          fetch(
+            `https://roblox-updater-api.onrender.com/v1/api/getimgfromunid?universeIds=${unid}&size=256x256&format=Webp`,
+          )
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              img.src = data.data[0].imageUrl + "?t=" + Date.now();
+            })
+            .catch((err) => console.error(err));
+        };
+        const fetchText = () => {
+          fetch(`https://roblox-updater-api.onrender.com/v1/api/gametext?universeIds=${unid}`)
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              h1.textContent = data.data[0].name;
+              h2.textContent = "play: " + shortenNumber(data.data[0].playing);
+              div.dataset.playing = data.data[0].playing;
+
+              const childrenArray = Array.from(infoDiv.children);
+              childrenArray.sort(
+                (a, b) => b.dataset.playing - a.dataset.playing,
+              );
+              childrenArray.forEach((child) => infoDiv.appendChild(child));
+              childrenArray.forEach((child, index) => {
+                  if(index === 0){
+                      child.style.transform = "scale(1.2) translateX(-5px)";
+                  } else if(index === 1) {
+                      child.style.transform = "scale(1.08) translateX(25px)";
+                  } else {
+                      child.style.transform = "scale(1) translateX(35px)";
+                  }
+              });
+            })
+            .catch((err) => console.error(err));
+        };
+
+        fetchImage();
+        fetchText();
+        setInterval(fetchText, (5 + i * 2) * 800);
+        setInterval(fetchImage, (8 + i * 2) * 1000);
+        div.appendChild(img);
+        div.appendChild(h1);
+        div.appendChild(h2);
+        infoDiv.appendChild(div);
+      });
+    </script>
+  </body>
+</html>
