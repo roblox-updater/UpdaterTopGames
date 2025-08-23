@@ -100,7 +100,7 @@
                 h1.textContent = data.data[0].name;
                 h2.textContent = "play: " + shortenNumber(data.data[0].playing);
                 div.dataset.playing = data.data[0].playing;
-
+                console.log("");
                 // Sort children by playing count
                 const childrenArray = Array.from(infoDiv.children);
                 childrenArray.sort((a,b) => b.dataset.playing - a.dataset.playing);
