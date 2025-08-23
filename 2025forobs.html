@@ -81,7 +81,11 @@
 
         // Fetch game thumbnail
         const fetchImage = () => {
-          fetch(`https://roblox-updater-api.onrender.com/v1/api/getimgfromunid?universeIds=${unid}&size=256x256&format=Webp`)
+          fetch(`https://roblox-updater-api.onrender.com/v1/api/getimgfromunid?universeIds=${unid}&size=256x256&format=Webp`, {
+  headers: {
+    'Accept-Language': 'en'
+  }
+})
             .then(res => res.json())
             .then(data => {
               if(data.data[0]) img.src = data.data[0].imageUrl + "?t=" + Date.now();
@@ -91,7 +95,11 @@
 
         // Fetch game info
         const fetchText = () => {
-          fetch(`https://roblox-updater-api.onrender.com/v1/api/gametext?universeIds=${unid}`)
+          fetch(`https://roblox-updater-api.onrender.com/v1/api/gametext?universeIds=${unid}`, {
+  headers: {
+    'Accept-Language': 'en'
+  }
+})
             .then(res => res.json())
             .then(data => {
               if(data.data[0]) {
